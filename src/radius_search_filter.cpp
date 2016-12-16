@@ -67,7 +67,12 @@ bool laser_filters::RadiusSearchFilter::update(
 
 			if(fabs(input_scan.ranges[i]- input_scan.ranges[neighbor_index]) <= threshold_radius_)
 			{
-			    counter++;
+				counter++;
+			}
+
+			if(counter >= threshold_num_)
+			{
+				break;
 			}
 		}
 
