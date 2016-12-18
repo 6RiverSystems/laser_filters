@@ -43,6 +43,9 @@
 #include "pluginlib/class_list_macros.h"
 
 
+
+
+
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserMedianFilter, laser_filters::LaserMedianFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserArrayFilter, laser_filters::LaserArrayFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanIntensityFilter, laser_filters::LaserScanIntensityFilter, filters::FilterBase<sensor_msgs::LaserScan>)
