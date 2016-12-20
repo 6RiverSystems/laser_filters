@@ -35,8 +35,8 @@
 #ifndef LASER_SCAN_RANGE_CLEAN_UP_FILTER_H
 #define LASER_SCAN_RANGE_CLEAN_UP_FILTER_H
 /**
-\author Yohei Kakiuchi
-@b ScanRangeFilter takes input scans and filters within indicated range.
+\author Daniel Grieneisen
+@b LaserScanRangeCleanUpFilter takes input scans and filters 0.0 ranges to max range.
 **/
 
 
@@ -73,7 +73,7 @@ public:
       {
       if (!std::isfinite(filtered_scan.ranges[i])
         || filtered_scan.ranges[i] < filtered_scan.range_min
-        || filtered_scan.ranges[i] > filtered_scan.range_max)
+        || filtered_scan.ranges[i] >= filtered_scan.range_max)
         {
           filtered_scan.ranges[i] = filtered_scan.range_max - EPSILON;
         }

@@ -30,6 +30,7 @@
 #include "laser_filters/median_filter.h"
 #include "laser_filters/array_filter.h"
 #include "laser_filters/intensity_filter.h"
+#include "laser_filters/radius_search_filter.h"
 #include "laser_filters/range_filter.h"
 #include "laser_filters/range_clean_up_filter.h"
 #include "laser_filters/scan_shadows_filter.h"
@@ -54,6 +55,7 @@ PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanRangeFilter, laser_filters::Lase
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanRangeCleanUpFilter, laser_filters::LaserScanRangeCleanUpFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanAngularBoundsFilter, laser_filters::LaserScanAngularBoundsFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanAngularBoundsFilterInPlace, laser_filters::LaserScanAngularBoundsFilterInPlace, filters::FilterBase<sensor_msgs::LaserScan>)
+PLUGINLIB_DECLARE_CLASS(laser_filters, RadiusSearchFilter, laser_filters::RadiusSearchFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanFootprintFilter, laser_filters::LaserScanFootprintFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, ScanShadowsFilter, laser_filters::ScanShadowsFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, InterpolationFilter, laser_filters::InterpolationFilter, filters::FilterBase<sensor_msgs::LaserScan>)
