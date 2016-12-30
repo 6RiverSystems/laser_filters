@@ -23,12 +23,12 @@ bool laser_filters::RadiusSearchFilter::configure()
   // Setup default values
   neighbor_num_ = 3;
   threshold_num_ = 3;
-  threshold_radius_ = 0.20;
+  threshold_ratio_ = 0.20;
 
   // launch values from parameter server
   getParam("neighbor_number", neighbor_num_);
   getParam("threshold_number", threshold_num_);
-  getParam("threshold_radius",  threshold_radius_);
+  getParam("threshold_ratio",  threshold_ratio_);
 
   return true;
 }
@@ -52,6 +52,11 @@ bool laser_filters::RadiusSearchFilter::update(
     }
 
     int counter = 0;
+
+    // adaptive threshold based on input_scan range value
+    // the further the point, the larger the radius search is set
+    double cur_threshold = ((int)(input_scan.ranges[i]) + 1) * threshold_ratio_;
+
     // for each point, traverse its neighbors
     for(int j= -neighbor_num_; j< neighbor_num_ + 1; j++)
     {
@@ -65,7 +70,7 @@ bool laser_filters::RadiusSearchFilter::update(
         continue;
       }
 
-      if(fabs(input_scan.ranges[i]- input_scan.ranges[neighbor_index]) <= threshold_radius_)
+      if(fabs(input_scan.ranges[i]- input_scan.ranges[neighbor_index]) <= cur_threshold)
       {
         counter++;
       }
