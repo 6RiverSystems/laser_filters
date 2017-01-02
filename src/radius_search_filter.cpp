@@ -9,8 +9,9 @@
  */
 
 #include <set>
-#include "laser_filters/radius_search_filter.h"
+#include <math.h>
 #include <ros/ros.h>
+#include "laser_filters/radius_search_filter.h"
 
 laser_filters::RadiusSearchFilter::RadiusSearchFilter(){
 }
@@ -70,7 +71,9 @@ bool laser_filters::RadiusSearchFilter::update(
         continue;
       }
 
-      if(fabs(input_scan.ranges[i]- input_scan.ranges[neighbor_index]) <= cur_threshold)
+      double cur_dist_sq = (input_scan.ranges[i] * input_scan.ranges[i]) + (input_scan.ranges[neighbor_index] * input_scan.ranges[neighbor_index]) + 2 * input_scan.ranges[i] * input_scan.ranges[neighbor_index] * cos((i-neighbor_index) * input_scan.angle_increment);
+
+      if( cur_dist_sq <= cur_threshold * cur_threshold)
       {
         counter++;
       }
