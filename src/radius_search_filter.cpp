@@ -24,7 +24,7 @@ bool laser_filters::RadiusSearchFilter::configure()
   // Setup default values
   neighbor_num_ = 3;
   threshold_num_ = 3;
-  threshold_ratio_ = 0.20;
+  threshold_ratio_ = 0.10;
 
   // launch values from parameter server
   getParam("neighbor_number", neighbor_num_);
@@ -47,7 +47,8 @@ bool laser_filters::RadiusSearchFilter::update(
   // traverse each point
   for(int i= 0; i< input_scan.ranges.size(); i++)
   {
-    if(output_scan.ranges[i] == std::numeric_limits<float>::quiet_NaN())
+    // skip if the range of the point is NaN
+    if(isnan(input_scan.ranges[i]))
     {
       continue;
     }
@@ -58,22 +59,26 @@ bool laser_filters::RadiusSearchFilter::update(
     // the further the point, the larger the radius search is set
     double cur_threshold = ((int)(input_scan.ranges[i]) + 1) * threshold_ratio_;
 
-    // for each point, traverse its neighbors
+    // for each point, visit its neighbors
     for(int j= -neighbor_num_; j< neighbor_num_ + 1; j++)
     {
       int neighbor_index = i + j;
 
       // skip out-of-bound points and the point itself
+      // also skip if the range of the neighboring point is NaN
       if( neighbor_index< 0 || 
           neighbor_index >= (int)input_scan.ranges.size() ||
-          neighbor_index == i)
+          neighbor_index == i ||
+          isnan(input_scan.ranges[neighbor_index]))
       {
         continue;
       }
 
-      double cur_dist_sq = (input_scan.ranges[i] * input_scan.ranges[i]) + (input_scan.ranges[neighbor_index] * input_scan.ranges[neighbor_index]) + 2 * input_scan.ranges[i] * input_scan.ranges[neighbor_index] * cos((i-neighbor_index) * input_scan.angle_increment);
+      // calculate the square distance between the point and one of the neighbor point
+      // c^2 = a^2 + b^2 - 2 * a * b * cos(alpha)
+      double cur_dist_sq = (input_scan.ranges[i] * input_scan.ranges[i]) + (input_scan.ranges[neighbor_index] * input_scan.ranges[neighbor_index]) - 2 * input_scan.ranges[i] * input_scan.ranges[neighbor_index] * cos((i - neighbor_index) * input_scan.angle_increment);
 
-      if( cur_dist_sq <= cur_threshold * cur_threshold)
+      if( cur_dist_sq <= cur_threshold * cur_threshold )
       {
         counter++;
       }
