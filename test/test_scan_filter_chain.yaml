@@ -42,3 +42,11 @@ array_filter_chain:
           params:
             number_of_observations: 3
 
+radius_filter_chain:
+  - type: RadiusSearchFilter
+    name: radius_search
+    params:
+      neighbor_number: 3
+      threshold_number: 2
+      threshold_ratio: 0.1
+

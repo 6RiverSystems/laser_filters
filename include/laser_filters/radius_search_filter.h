@@ -65,7 +65,7 @@ class RadiusSearchFilter : public filters::FilterBase<sensor_msgs::LaserScan>
   /*
    * @brief The distance to be neighbor
    */
-  double threshold_radius_;
+  double threshold_ratio_;
 
   RadiusSearchFilter();
 

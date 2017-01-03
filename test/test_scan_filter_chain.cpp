@@ -173,6 +173,47 @@ TEST(ScanToScanFilterChain, ArrayFilter)
   filter_chain_.clear();
 }
 
+TEST(ScanToScanFilterChain, RadiusFilter)
+{
+  sensor_msgs::LaserScan msg_in, msg_out, expected_msg;
+  // test basic functionality
+  float nanval = std::numeric_limits<float>::quiet_NaN();
+  float temp[] = {1.0, nanval, 1.0, 1.0, 1.0, nanval, 1.0, 1.0, 1.0, nanval};
+  std::vector<float> v1 (temp, temp + sizeof(temp) / sizeof(float));
+  expected_msg.ranges = v1;
+  filters::FilterChain<sensor_msgs::LaserScan> filter_chain_("sensor_msgs::LaserScan");
+
+  EXPECT_TRUE(filter_chain_.configure("radius_filter_chain"));
+
+  msg_in = gen_msg();
+
+  EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
+  expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
+
+  // test cur_threshold is setup correctly and we consider euclidean distance rather than range only
+  float temp2[] = {0.9, 0.8, 1.0, 1.0, 1.1, 9.0, 1.0, 1.0, 1.0, 2.3};
+  std::vector<float> v2 (temp2, temp2 + sizeof(temp2) / sizeof(float));
+  msg_in.ranges = v2;
+  EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
+
+  float temp3[] = {nanval, nanval, 1.0, 1.0, 1.1, nanval, 1.0, 1.0, 1.0, nanval};
+  std::vector<float> v3 (temp3, temp3 + sizeof(temp3) / sizeof(float));
+  expected_msg.ranges = v3;
+  expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
+
+  // test cur_threshold is adaptive to the range of the point
+  float temp4[] = {4.9, 5.39, 4.41, 1.0, 8.0, 8.89, 7.11, 1.0, 1.0, 0.9};
+  std::vector<float> v4 (temp4, temp4 + sizeof(temp4) / sizeof(float));
+  msg_in.ranges = v4;
+  EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
+
+  float temp5[] = {4.9, nanval, nanval, nanval, 8.0, nanval, nanval, 1.0, 1.0, nanval};
+  std::vector<float> v5 (temp5, temp5 + sizeof(temp5) / sizeof(float));
+  expected_msg.ranges = v5;
+  expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
+
+  filter_chain_.clear();
+}
 
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
