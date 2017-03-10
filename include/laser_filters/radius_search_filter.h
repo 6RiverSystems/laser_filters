@@ -43,6 +43,8 @@
 
 #include <filters/filter_base.h>
 #include <sensor_msgs/LaserScan.h>
+#include <dynamic_reconfigure/server.h>
+#include <laser_filters/LaserConfig.h>
 
 namespace laser_filters
 {
@@ -76,6 +78,11 @@ class RadiusSearchFilter : public filters::FilterBase<sensor_msgs::LaserScan>
   bool update(
     const sensor_msgs::LaserScan& input_scan,
     sensor_msgs::LaserScan& filtered_scan);
+
+  private:
+
+    void reconfigureCB(laser_filters::LaserConfig& config, uint32_t level);
+
 };
 
 }

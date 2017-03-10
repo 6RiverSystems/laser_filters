@@ -34,6 +34,13 @@ bool laser_filters::RadiusSearchFilter::configure()
   return true;
 }
 
+void laser_filters::RadiusSearchFilter::reconfigureCB(laser_filters::LaserConfig& config, uint32_t level)
+{
+  neighbor_num_ = config.radius_neighbor_number;
+  threshold_num_ = config.radius_neighbor_threshold;
+  threshold_ratio_ = config.radius_threshold_ratio;
+}
+
 bool laser_filters::RadiusSearchFilter::update(
     const sensor_msgs::LaserScan& input_scan,
     sensor_msgs::LaserScan &output_scan)

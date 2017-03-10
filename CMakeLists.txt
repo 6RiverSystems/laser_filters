@@ -6,11 +6,13 @@ project(laser_filters)
 ##############################################################################
 
 set(THIS_PACKAGE_ROS_DEPS sensor_msgs roscpp tf filters message_filters
-  laser_geometry pluginlib angles)
+  laser_geometry pluginlib angles dynamic_reconfigure)
 
 find_package(catkin REQUIRED COMPONENTS ${THIS_PACKAGE_ROS_DEPS})
 find_package(Boost REQUIRED COMPONENTS system signals)
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+
+generate_dynamic_reconfigure_options(cfg/Laser.cfg)
 
 ##############################################################################
 # Define package
@@ -31,6 +33,7 @@ add_library(pointcloud_filters src/pointcloud_filters.cpp)
 target_link_libraries(pointcloud_filters ${catkin_LIBRARIES})
 
 add_library(laser_scan_filters src/laser_scan_filters.cpp src/median_filter.cpp src/array_filter.cpp src/box_filter.cpp src/radius_search_filter.cpp)
+add_dependencies(laser_scan_filters laser_scan_filters_gencfg)
 target_link_libraries(laser_scan_filters ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(scan_to_cloud_filter_chain src/scan_to_cloud_filter_chain.cpp)
