@@ -40,6 +40,7 @@ add_executable(scan_to_cloud_filter_chain src/scan_to_cloud_filter_chain.cpp)
 target_link_libraries(scan_to_cloud_filter_chain ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(scan_to_scan_filter_chain src/scan_to_scan_filter_chain.cpp)
+add_dependencies(laser_scan_filters laser_scan_filters_gencfg)
 target_link_libraries(scan_to_scan_filter_chain ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(generic_laser_filter_node src/generic_laser_filter_node.cpp)

@@ -14,6 +14,9 @@
 #include "laser_filters/radius_search_filter.h"
 
 laser_filters::RadiusSearchFilter::RadiusSearchFilter(){
+  dynamic_reconfigure::Server<laser_filters::LaserConfig>::CallbackType f;
+  f = boost::bind(&laser_filters::RadiusSearchFilter::reconfigureCB, this, _1, _2);
+  srv_.setCallback(f);
 }
 
 laser_filters::RadiusSearchFilter::~RadiusSearchFilter(){

@@ -81,6 +81,8 @@ class RadiusSearchFilter : public filters::FilterBase<sensor_msgs::LaserScan>
 
   private:
 
+    dynamic_reconfigure::Server<laser_filters::LaserConfig> srv_;
+
     void reconfigureCB(laser_filters::LaserConfig& config, uint32_t level);
 
 };
