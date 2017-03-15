@@ -42,8 +42,6 @@
 #include "filters/filter_base.h"
 #include <sensor_msgs/LaserScan.h>
 #include <angles/angles.h>
-#include <dynamic_reconfigure/server.h>
-#include <laser_filters/LaserConfig.h>
 
 namespace laser_filters{
 
@@ -62,9 +60,6 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   ScanShadowsFilter () 
   {
-    dynamic_reconfigure::Server<laser_filters::LaserConfig>::CallbackType f;
-    f = boost::bind(&laser_filters::ScanShadowsFilter::reconfigureCB, this, _1, _2);
-    srv_.setCallback(f);
   }
 
   /**@b Configure the filter from XML */
@@ -151,17 +146,6 @@ public:
   }
 
   ////////////////////////////////////////////////////////////////////////////////
-
-private:
-  dynamic_reconfigure::Server<laser_filters::LaserConfig> srv_;
-
-  void reconfigureCB(laser_filters::LaserConfig& config, uint32_t level)
-  {
-    min_angle_ = config.min_angle;
-    max_angle_ = config.max_angle;
-    neighbors_ = config.scan_shadow_neighbors;
-    window_ = config.scan_shadow_window;
-  }
 
 } ;
 }
