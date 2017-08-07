@@ -126,7 +126,7 @@ public:
           continue;
 	}
 
-        double angle = abs(angles::to_degrees(getAngleWithViewpoint (scan_in.ranges[i],scan_in.ranges[j], y * scan_in.angle_increment)));
+        double angle = fabs(angles::to_degrees(getAngleWithViewpoint (scan_in.ranges[i],scan_in.ranges[j], y * scan_in.angle_increment)));
         if (angle < min_angle_ || angle > max_angle_) 
         {
 	  for (int index = std::max<int>(i - neighbors_, 0); index <= std::min<int>(i+neighbors_, (int)scan_in.ranges.size()-1); index++)
