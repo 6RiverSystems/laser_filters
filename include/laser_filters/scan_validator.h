@@ -56,7 +56,6 @@ class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
    */
   int consecutive_scans_;
 
-
   /*
    * @brief Tolerance in percentage which laser points are closer than 
             they should be
@@ -67,6 +66,16 @@ class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
    * @brief Counter for violated scan
    */
   int cur_scans_;
+
+  /*
+   * @brief Contour for the robot
+   */
+  std::vector<double> contour_;
+
+  /*
+   * @brief Tolerance of the contour distance measurement
+   */
+  double contour_tolerance_;
 
   ScanValidator();
 
