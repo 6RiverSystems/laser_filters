@@ -34,14 +34,12 @@
 
 /**
 \author Zach Fang
-@brief This is a filter that remove isolated points based on radius search.
-       If not enough neighbors are around, the point will be abandoned and
-       its range will be set to NaN.
+@brief A laserscan validator to check all range readings are reasonable,
+       more specifically, not occluded or something very close to the 
+       device.  
 **/
-
-
-#ifndef RADIUS_SEARCH_FILTER_H
-#define RADIUS_SEARCH_FILTER_H
+#ifndef SCAN_VALIDATOR_h
+#define SCAN_VALIDATOR_h
 
 #include <filters/filter_base.h>
 #include <sensor_msgs/LaserScan.h>
@@ -49,29 +47,30 @@
 namespace laser_filters
 {
 
-class RadiusSearchFilter : public filters::FilterBase<sensor_msgs::LaserScan>
+class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
 {
   public:
 
   /*
-   * @brief The number of candidates each side to consider
+   * @brief The number of consecutive violated scans to raise the alert 
    */
-  int neighbor_num_;
+  int consecutive_scans_;
+
 
   /*
-   * @brief The minimum amount of neighbors a point should have to be
-   * considered as a valid point
+   * @brief Tolerance in percentage which laser points are closer than 
+            they should be
    */
-  int threshold_num_;
+  double violation_percentage_;
 
   /*
-   * @brief The distance to be neighbor
+   * @brief Counter for violated scan
    */
-  double threshold_ratio_;
+  int cur_scans_;
 
-  RadiusSearchFilter();
+  ScanValidator();
 
-  virtual ~RadiusSearchFilter();
+  virtual ~ScanValidator();
 
   bool configure();
 
@@ -80,6 +79,6 @@ class RadiusSearchFilter : public filters::FilterBase<sensor_msgs::LaserScan>
     sensor_msgs::LaserScan& filtered_scan);
 };
 
-}
+} // namespace laser_filters
 
-#endif /* radius_search_filter.h */
+#endif /* scan_validator.h */
