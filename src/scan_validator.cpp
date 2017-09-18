@@ -68,7 +68,7 @@ bool laser_filters::ScanValidator::update(
     // Stop laserscan from propagating to next filter chain
     if(cur_scans_ >= consecutive_scans_) {
       int errorPercentage = static_cast<int>(static_cast<float>(cur_count) / static_cast<float>(input_scan.ranges.size() * 100.0));
-      ROS_ERROR_THROTTLE(5.0, "%d percent of the image pixels are zero, camera might be occluded", errorPercentage);
+      ROS_ERROR_THROTTLE(5.0, "%d percent of the scan readings are smaller than expected, lidar might be occluded", errorPercentage);
       return false;
     }
   } else {
