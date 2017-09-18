@@ -48,7 +48,7 @@ bool laser_filters::ScanValidator::update(
     return true;
   }
 
-  int number_threshold = (int)(violation_percentage_ / 100.0 * input_scan.ranges.size());
+  int number_threshold = static_cast<int>(violation_percentage_ / 100.0 * input_scan.ranges.size());
   int cur_count = 0;
 
   // Traverse each point
@@ -67,6 +67,8 @@ bool laser_filters::ScanValidator::update(
     cur_scans_ += 1;
     // Stop laserscan from propagating to next filter chain
     if(cur_scans_ >= consecutive_scans_) {
+      int errorPercentage = static_cast<int>(static_cast<float>(cur_count) / static_cast<float>(input_scan.ranges.size() * 100.0));
+      ROS_ERROR_THROTTLE(5.0, "%d percent of the image pixels are zero, camera might be occluded", errorPercentage);
       return false;
     }
   } else {
