@@ -54,6 +54,12 @@ bool laser_filters::ScanValidator::update(
   // Traverse each point
   for(int i = 0; i < input_scan.ranges.size(); i++)
   {
+    // avoid the case when the reading is 0.0
+    if(input_scan.ranges[i] < 0.01)
+    {
+      continue;
+    }
+
     // If the reading is NaN or smaller than contour range
     // Make the contour slightly smaller to avoid false positive case
     if(isnan(input_scan.ranges[i]) || input_scan.ranges[i] < (contour_[i] - contour_tolerance_))
