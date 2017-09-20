@@ -4,9 +4,10 @@ project(laser_filters)
 ##############################################################################
 # Find dependencies
 ##############################################################################
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(THIS_PACKAGE_ROS_DEPS sensor_msgs roscpp tf filters message_filters
-  laser_geometry pluginlib angles)
+  laser_geometry pluginlib angles srslib_framework)
 
 find_package(catkin REQUIRED COMPONENTS ${THIS_PACKAGE_ROS_DEPS})
 find_package(Boost REQUIRED COMPONENTS system signals)

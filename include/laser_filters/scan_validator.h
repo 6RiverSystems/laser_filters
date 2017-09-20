@@ -51,32 +51,6 @@ class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
 {
   public:
 
-  /*
-   * @brief The number of consecutive violated scans to raise the alert 
-   */
-  int consecutive_scans_;
-
-  /*
-   * @brief Tolerance in percentage which laser points are closer than 
-            they should be
-   */
-  double violation_percentage_;
-
-  /*
-   * @brief Counter for violated scan
-   */
-  int cur_scans_;
-
-  /*
-   * @brief Contour for the robot
-   */
-  std::vector<double> contour_;
-
-  /*
-   * @brief Tolerance of the contour distance measurement
-   */
-  double contour_tolerance_;
-
   ScanValidator();
 
   virtual ~ScanValidator();
@@ -86,6 +60,41 @@ class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
   bool update(
     const sensor_msgs::LaserScan& input_scan,
     sensor_msgs::LaserScan& filtered_scan);
+
+  private:
+
+  bool checkLaserConfig(
+    const sensor_msgs::LaserScan& scan);
+
+  ros::NodeHandle pnh_;
+
+  /*
+   * @brief Tolerance in percentage which laser points are closer than 
+            they should be
+   */
+  float violation_percentage_;
+
+  /*
+   * @brief Contour for the robot
+   */
+  std::vector<float> contour_;
+
+  /*
+   * @brief Tolerance of the contour distance measurement
+   */
+  float contour_tolerance_;
+
+  std::string frame_id_;
+
+  float angle_min_;
+
+  float angle_max_;
+
+  float angle_increment_;
+
+  float range_min_;
+
+  float range_max_;
 };
 
 } // namespace laser_filters
