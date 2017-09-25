@@ -69,32 +69,39 @@ class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
   ros::NodeHandle pnh_;
 
   /*
-   * @brief Tolerance in percentage which laser points are closer than 
-            they should be
+   * @brief Violation percentage to determine a false laserscan
    */
-  float violation_percentage_;
+  double violation_percentage_;
 
   /*
-   * @brief Contour for the robot
+   * @brief Contour for the robot lidar shroud
    */
-  std::vector<float> contour_;
+  std::vector<double> contour_;
 
   /*
-   * @brief Tolerance of the contour distance measurement
+   * @brief Tolerance for the contour distance measurement
    */
-  float contour_tolerance_;
+  double contour_tolerance_;
 
+  /*
+   * @brief Flag indicating whether the laser confiuration is checked
+   */
+  bool has_checked_laser_config_;
+
+  /*
+   * @brief Laserscan configuration
+   */
   std::string frame_id_;
 
-  float angle_min_;
+  double angle_min_;
 
-  float angle_max_;
+  double angle_max_;
 
-  float angle_increment_;
+  double angle_increment_;
 
-  float range_min_;
+  double range_min_;
 
-  float range_max_;
+  double range_max_;
 };
 
 } // namespace laser_filters

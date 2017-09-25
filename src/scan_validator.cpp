@@ -14,7 +14,7 @@
 #include "laser_filters/scan_validator.h"
 
 laser_filters::ScanValidator::ScanValidator() :
-  pnh_("~")
+  has_checked_laser_config_(false)
 {
 
 }
@@ -27,15 +27,15 @@ laser_filters::ScanValidator::~ScanValidator()
 bool laser_filters::ScanValidator::configure()
 {
   // Setup default values
-  pnh_.param<float>("violation_percentage", violation_percentage_, 0.1);
-  pnh_.param<float>("contour_tolerance", contour_tolerance_, 0.02);
-  pnh_.param<std::string>("frame_id", frame_id_, "sick_lidar");
-  pnh_.param<float>("angle_min", angle_min_);
-  pnh_.param<float>("angle_max", angle_max_);
-  pnh_.param<float>("angle_increment", angle_increment_);
-  pnh_.param<float>("range_min", range_min_);
-  pnh_.param<float>("range_max", range_max_);
-  pnh_.param<std::vector<float> >("contour", contour_);
+  getParam("violation_percentage", violation_percentage_);
+  getParam("contour_tolerance", contour_tolerance_);
+  getParam("frame_id", frame_id_);
+  getParam("angle_min", angle_min_);
+  getParam("angle_max", angle_max_);
+  getParam("angle_increment", angle_increment_);
+  getParam("range_min", range_min_);
+  getParam("range_max", range_max_);
+  getParam("contour", contour_);
 
   return true;
 }
@@ -47,9 +47,16 @@ bool laser_filters::ScanValidator::update(
   // Copy input_scan data
   output_scan = input_scan;
 
-  if(!checkLaserConfig(input_scan))
+  // One-time check for laserscan configuration
+  if(!has_checked_laser_config_)
   {
-    return false;
+    if(!checkLaserConfig(input_scan))
+    {
+      return false;
+    } else {
+      ROS_INFO("Input laserscan configuration matches defualt setting");
+      has_checked_laser_config_ = true;
+    }
   }
 
   int number_threshold = static_cast<int>(violation_percentage_ * input_scan.ranges.size());
@@ -80,14 +87,16 @@ bool laser_filters::ScanValidator::update(
 bool laser_filters::ScanValidator::checkLaserConfig(
     const sensor_msgs::LaserScan& scan)
 {
+  const double EPS = 0.0001;
+
   if(scan.ranges.size() != contour_.size() ||
-     !srs::BasicMath::equal<float>(scan.angle_min, angle_min_) ||
-     !srs::BasicMath::equal<float>(scan.angle_max, angle_max_) ||
-     !srs::BasicMath::equal<float>(scan.angle_increment, angle_increment_) ||
-     !srs::BasicMath::equal<float>(scan.range_min, range_min_) ||
-     !srs::BasicMath::equal<float>(scan.range_max, range_max_))
+     !srs::BasicMath::equal<double>(scan.angle_min, angle_min_, EPS) ||
+     !srs::BasicMath::equal<double>(scan.angle_max, angle_max_, EPS) ||
+     !srs::BasicMath::equal<double>(scan.angle_increment, angle_increment_, EPS) ||
+     !srs::BasicMath::equal<double>(scan.range_min, range_min_, EPS) ||
+     !srs::BasicMath::equal<double>(scan.range_max, range_max_, EPS))
   {
-    ROS_ERROR_THROTTLE(5.0, "Laserscan received violates the validator laserscan params");
+    ROS_ERROR_THROTTLE(5.0, "Input laserscan configuration is different from defualt setting");
     return false;
   }
 
