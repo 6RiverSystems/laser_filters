@@ -33,7 +33,7 @@
     <class name="laser_filters/ScanValidator" type="laser_filters::ScanValidator"
       base_class_type="filters::FilterBase<sensor_msgs::LaserScan>">
       <description>
-  This is a filter which validates the scan is not occluded by other objects.
+	This is a filter which validates the scan is not occluded by other objects.
       </description>
     </class>
     <class name="laser_filters/InterpolationFilter" type="laser_filters::InterpolationFilter"
