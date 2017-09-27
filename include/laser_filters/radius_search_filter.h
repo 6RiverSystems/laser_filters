@@ -35,8 +35,8 @@
 /**
 \author Zach Fang
 @brief This is a filter that remove isolated points based on radius search.
-       If not enough neighbors are around, the point will be abandoned and
-       its range will be set to NaN.
+       If not enough neighbors are around, the point will be abandoned and its range
+       will be set to NaN.
 **/
 
 
