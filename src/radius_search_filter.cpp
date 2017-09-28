@@ -48,7 +48,7 @@ bool laser_filters::RadiusSearchFilter::update(
   for(int i= 0; i< input_scan.ranges.size(); i++)
   {
     // skip if the range of the point is NaN
-    if(isnan(input_scan.ranges[i]))
+    if(std::isnan(input_scan.ranges[i]))
     {
       continue;
     }
@@ -69,7 +69,7 @@ bool laser_filters::RadiusSearchFilter::update(
       if( neighbor_index< 0 || 
           neighbor_index >= (int)input_scan.ranges.size() ||
           neighbor_index == i ||
-          isnan(input_scan.ranges[neighbor_index]))
+          std::isnan(input_scan.ranges[neighbor_index]))
       {
         continue;
       }

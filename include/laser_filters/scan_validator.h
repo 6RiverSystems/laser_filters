@@ -34,14 +34,12 @@
 
 /**
 \author Zach Fang
-@brief This is a filter that remove isolated points based on radius search.
-       If not enough neighbors are around, the point will be abandoned and its range
-       will be set to NaN.
+@brief A laserscan validator to check all range readings are reasonable,
+       more specifically, not occluded or something very close to the 
+       device.  
 **/
-
-
-#ifndef RADIUS_SEARCH_FILTER_H
-#define RADIUS_SEARCH_FILTER_H
+#ifndef SCAN_VALIDATOR_h
+#define SCAN_VALIDATOR_h
 
 #include <filters/filter_base.h>
 #include <sensor_msgs/LaserScan.h>
@@ -49,37 +47,63 @@
 namespace laser_filters
 {
 
-class RadiusSearchFilter : public filters::FilterBase<sensor_msgs::LaserScan>
+class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
 {
   public:
 
-  /*
-   * @brief The number of candidates each side to consider
-   */
-  int neighbor_num_;
+  ScanValidator();
 
-  /*
-   * @brief The minimum amount of neighbors a point should have to be
-   * considered as a valid point
-   */
-  int threshold_num_;
-
-  /*
-   * @brief The distance to be neighbor
-   */
-  double threshold_ratio_;
-
-  RadiusSearchFilter();
-
-  virtual ~RadiusSearchFilter();
+  virtual ~ScanValidator();
 
   bool configure();
 
   bool update(
     const sensor_msgs::LaserScan& input_scan,
     sensor_msgs::LaserScan& filtered_scan);
+
+  private:
+
+  bool checkLaserConfig(
+    const sensor_msgs::LaserScan& scan);
+
+  ros::NodeHandle pnh_;
+
+  /*
+   * @brief Violation percentage to determine a false laserscan
+   */
+  double violation_percentage_;
+
+  /*
+   * @brief Contour for the robot lidar shroud
+   */
+  std::vector<double> contour_;
+
+  /*
+   * @brief Tolerance for the contour distance measurement
+   */
+  double contour_tolerance_;
+
+  /*
+   * @brief Flag indicating whether the laser confiuration is checked
+   */
+  bool has_checked_laser_config_;
+
+  /*
+   * @brief Laserscan configuration
+   */
+  std::string frame_id_;
+
+  double angle_min_;
+
+  double angle_max_;
+
+  double angle_increment_;
+
+  double range_min_;
+
+  double range_max_;
 };
 
-}
+} // namespace laser_filters
 
-#endif /* radius_search_filter.h */
+#endif /* scan_validator.h */
