@@ -44,9 +44,6 @@ bool laser_filters::ScanValidator::update(
     const sensor_msgs::LaserScan& input_scan,
     sensor_msgs::LaserScan &output_scan)
 {
-  // Copy input_scan data
-  output_scan = input_scan;
-
   // One-time check for laserscan configuration
   if(!has_checked_laser_config_)
   {
@@ -54,10 +51,12 @@ bool laser_filters::ScanValidator::update(
     {
       return false;
     } else {
-      ROS_INFO("Input laserscan configuration matches defualt setting");
       has_checked_laser_config_ = true;
     }
   }
+
+  // Copy input_scan data
+  output_scan = input_scan;
 
   int number_threshold = static_cast<int>(violation_percentage_ * input_scan.ranges.size());
   int cur_count = 0;
@@ -96,7 +95,7 @@ bool laser_filters::ScanValidator::checkLaserConfig(
      !srs::BasicMath::equal<double>(scan.range_min, range_min_, EPS) ||
      !srs::BasicMath::equal<double>(scan.range_max, range_max_, EPS))
   {
-    ROS_ERROR_THROTTLE(5.0, "Input laserscan configuration is different from defualt setting");
+    ROS_ERROR_ONCE("Input laserscan configuration is different from default setting");
     return false;
   }
 
