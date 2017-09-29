@@ -75,7 +75,7 @@ bool laser_filters::ScanValidator::update(
 
   // Stop laserscan from propagating to next filter chain
   if(cur_count >= number_threshold) {
-    int errorPercentage = static_cast<int>((static_cast<float>(cur_count) / 100) * static_cast<float>(input_scan.ranges.size()));
+    int errorPercentage = static_cast<int>((static_cast<float>(cur_count) * 100) / static_cast<float>(input_scan.ranges.size()));
     ROS_ERROR_THROTTLE(5.0, "%d percent of the scan readings are smaller than expected, lidar might be occluded", errorPercentage);
     return false;
   }
