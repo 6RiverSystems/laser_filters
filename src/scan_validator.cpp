@@ -82,17 +82,16 @@ bool laser_filters::ScanValidator::update(
     }
   }
 
-  int occlusionPercentage = static_cast<int>((static_cast<float>(occlusion_count) * 100) / static_cast<float>(input_scan.ranges.size()));
-  int zeroCountPercentage = static_cast<int>((static_cast<float>(zero_count) * 100) / static_cast<float>(input_scan.ranges.size()));
-
   if(zero_count >= zero_threshold_num)
   {
-    ROS_WARN_THROTTLE(5.0, "%d percent of the scan readings are zero", occlusionPercentage);
+    int zeroCountPercentage = static_cast<int>((static_cast<float>(zero_count) * 100) / static_cast<float>(input_scan.ranges.size()));
+    ROS_WARN_THROTTLE(5.0, "%d percent of the scan readings are zero", zeroCountPercentage);
   }
 
   // Stop laserscan from propagating to next filter chain
   if(occlusion_count >= occlusion_threshold_num)
   {
+    int occlusionPercentage = static_cast<int>((static_cast<float>(occlusion_count) * 100) / static_cast<float>(input_scan.ranges.size()));
     ROS_ERROR_THROTTLE(5.0, "%d percent of the scan readings are smaller than expected, lidar might be occluded", occlusionPercentage);
     return false;
   }
