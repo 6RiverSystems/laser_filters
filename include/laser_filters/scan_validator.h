@@ -71,7 +71,7 @@ class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
   /*
    * @brief Violation percentage to determine a false laserscan
    */
-  double violation_percentage_;
+  double occlusion_threshold_;
 
   /*
    * @brief Contour for the robot lidar shroud

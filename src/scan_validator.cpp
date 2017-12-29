@@ -27,7 +27,7 @@ laser_filters::ScanValidator::~ScanValidator()
 bool laser_filters::ScanValidator::configure()
 {
   // Setup default values
-  getParam("violation_percentage", violation_percentage_);
+  getParam("occlusion_threshold", occlusion_threshold_);
   getParam("contour_tolerance", contour_tolerance_);
   getParam("frame_id", frame_id_);
   getParam("angle_min", angle_min_);
@@ -58,30 +58,38 @@ bool laser_filters::ScanValidator::update(
   // Copy input_scan data
   output_scan = input_scan;
 
-  int number_threshold = static_cast<int>(violation_percentage_ * input_scan.ranges.size());
-  int cur_count = 0;
+  int number_threshold = static_cast<int>(occlusion_threshold_ * input_scan.ranges.size());
+  int occlusion_count = 0;
+  int zero_count = 0;
 
   // Traverse each point
   for(auto i = 0; i < input_scan.ranges.size(); i++)
   {
+    // zero reading usually means obstacle is further than LIDAR max range
+    if(input_scan.ranges[i] == 0)
+    {
+      zero_count += 1;
+      continue;
+    }
     // Counts for the reading is NaN or smaller than contour range
     // Make the contour slightly smaller to avoid false positive case
     if(std::isnan(input_scan.ranges[i]) ||
        input_scan.ranges[i] < (contour_[i] - contour_tolerance_))
     {
-      cur_count += 1;
+      occlusion_count += 1;
     }
   }
 
-  int occlusionPercentage = static_cast<int>((static_cast<float>(cur_count) * 100) / static_cast<float>(input_scan.ranges.size()));
+  int occlusionPercentage = static_cast<int>((static_cast<float>(occlusion_count) * 100) / static_cast<float>(input_scan.ranges.size()));
+  int zeroCountPercentage = static_cast<int>((static_cast<float>(zero_count) * 100) / static_cast<float>(input_scan.ranges.size()));
 
   // Stop laserscan from propagating to next filter chain
-  if(cur_count >= number_threshold) {
+  if(occlusion_count >= number_threshold) {
     ROS_ERROR_THROTTLE(5.0, "%d percent of the scan readings are smaller than expected, lidar might be occluded", occlusionPercentage);
     return false;
   }
 
-  ROS_DEBUG_THROTTLE(60.0, "%d percent laserscan occlusion", occlusionPercentage);
+  ROS_DEBUG_THROTTLE(60.0, "%d percent of laserscan is occluded and %d percent is out of range", occlusionPercentage, zeroCountPercentage);
   return true;
 }
 
