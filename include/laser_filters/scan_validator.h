@@ -69,9 +69,14 @@ class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
   ros::NodeHandle pnh_;
 
   /*
-   * @brief Violation percentage to determine a false laserscan
+   * @brief occlusion percentage to determine a false laserscan
    */
   double occlusion_threshold_;
+
+  /*
+   * @brief zero-value percentage for possible false case
+   */
+  double zero_threshold_;
 
   /*
    * @brief Contour for the robot lidar shroud
