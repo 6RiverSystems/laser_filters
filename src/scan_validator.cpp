@@ -67,8 +67,9 @@ bool laser_filters::ScanValidator::update(
   // Traverse each point
   for(auto i = 0; i < input_scan.ranges.size(); i++)
   {
-    // zero reading usually means obstacle is further than LIDAR max range
-    if(input_scan.ranges[i] == 0)
+    // Zero range usually means obstacle is further than LIDAR max range
+    // Zero intensity occurs when the ray reflects from reflective object or another LIDAR
+    if(input_scan.ranges[i] == 0 || input_scan.intensities[i] == 0)
     {
       zero_count += 1;
       continue;
