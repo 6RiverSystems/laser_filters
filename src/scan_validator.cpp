@@ -86,7 +86,7 @@ bool laser_filters::ScanValidator::update(
   if(zero_count >= zero_threshold_num)
   {
     int zeroCountPercentage = static_cast<int>((static_cast<float>(zero_count) * 100) / static_cast<float>(input_scan.ranges.size()));
-    ROS_WARN_THROTTLE(5.0, "%d percent of the scan readings are zero", zeroCountPercentage);
+    ROS_WARN_THROTTLE(5.0, "%d percent invalid readings (zero range or zero intensity)", zeroCountPercentage);
   }
 
   // Stop laserscan from propagating to next filter chain
