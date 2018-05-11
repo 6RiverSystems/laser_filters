@@ -74,10 +74,9 @@ bool laser_filters::ScanValidator::update(
       zero_count += 1;
       continue;
     }
-    // Counts for the reading is NaN or smaller than contour range
+    // Counts for the readings smaller than contour range
     // Make the contour slightly smaller to avoid false positive case
-    if(std::isnan(input_scan.ranges[i]) ||
-       input_scan.ranges[i] < (contour_[i] - contour_tolerance_))
+    if(input_scan.ranges[i] < (contour_[i] - contour_tolerance_)
     {
       occlusion_count += 1;
     }
