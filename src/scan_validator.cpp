@@ -76,7 +76,7 @@ bool laser_filters::ScanValidator::update(
     }
     // Counts for the readings smaller than contour range
     // Make the contour slightly smaller to avoid false positive case
-    if(input_scan.ranges[i] < (contour_[i] - contour_tolerance_)
+    if(input_scan.ranges[i] < (contour_[i] - contour_tolerance_))
     {
       occlusion_count += 1;
     }
