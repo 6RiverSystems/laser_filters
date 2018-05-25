@@ -20,15 +20,15 @@ laser_filters::ScanValidator::ScanValidator() :
 }
 
 laser_filters::ScanValidator::~ScanValidator()
-{
+{ 
 
 }
 
 bool laser_filters::ScanValidator::configure()
 {
   // Setup default values
-  getParam("occlusion_threshold", occlusion_threshold_);
-  getParam("zero_threshold", zero_threshold_);
+  getParam("lidar_occlusion_threshold", lidar_occlusion_threshold_);
+  getParam("lidar_invalid_threshold", lidar_invalid_threshold_);
   getParam("contour_tolerance", contour_tolerance_);
   getParam("frame_id", frame_id_);
   getParam("angle_min", angle_min_);
@@ -59,19 +59,20 @@ bool laser_filters::ScanValidator::update(
   // Copy input_scan data
   output_scan = input_scan;
 
-  int occlusion_threshold_num = static_cast<int>(occlusion_threshold_ * input_scan.ranges.size());
-  int zero_threshold_num = static_cast<int>(zero_threshold_ * input_scan.ranges.size());
+  int lidar_occlusion_threshold_num = static_cast<int>(lidar_occlusion_threshold_ * input_scan.ranges.size());
+  int lidar_invalid_threshold_num = static_cast<int>(lidar_invalid_threshold_ * input_scan.ranges.size());
   int occlusion_count = 0;
-  int zero_count = 0;
+  int invalid_count = 0;
 
   // Traverse each point
   for(auto i = 0; i < input_scan.ranges.size(); i++)
   {
     // Zero range usually means obstacle is further than LIDAR max range
     // Zero intensity occurs when the ray reflects from reflective object or another LIDAR
+    // NAN values present when points rejected by a filter
     if(input_scan.ranges[i] == 0 || input_scan.intensities[i] == 0 || std::isnan(input_scan.ranges[i]))
     {
-      zero_count += 1;
+      invalid_count += 1;
       continue;
     }
     // Counts for the readings smaller than contour range
@@ -82,14 +83,14 @@ bool laser_filters::ScanValidator::update(
     }
   }
 
-  if(zero_count >= zero_threshold_num)
+  if(invalid_count >= lidar_invalid_threshold_num)
   {
-    int zeroCountPercentage = static_cast<int>((static_cast<float>(zero_count) * 100) / static_cast<float>(input_scan.ranges.size()));
-    ROS_WARN_THROTTLE(5.0, "%d percent invalid readings (zero range or zero intensity)", zeroCountPercentage);
+    int invalidCountPercentage = static_cast<int>((static_cast<float>(invalid_count) * 100) / static_cast<float>(input_scan.ranges.size()));
+    ROS_WARN_THROTTLE(5.0, "%d percent invalid readings (nan, zero range or zero intensity)", invalidCountPercentage);
   }
 
   // Stop laserscan from propagating to next filter chain
-  if(occlusion_count >= occlusion_threshold_num)
+  if(occlusion_count >= lidar_occlusion_threshold_num)
   {
     int occlusionPercentage = static_cast<int>((static_cast<float>(occlusion_count) * 100) / static_cast<float>(input_scan.ranges.size()));
     ROS_ERROR_THROTTLE(5.0, "%d percent of the scan readings are smaller than expected, lidar might be occluded", occlusionPercentage);
