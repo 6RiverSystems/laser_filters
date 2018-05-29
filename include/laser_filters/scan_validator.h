@@ -93,11 +93,6 @@ class ScanValidator : public filters::FilterBase<sensor_msgs::LaserScan>
    */
   bool has_checked_laser_config_;
 
-  /*
-   * @brief Laserscan configuration
-   */
-  std::string frame_id_;
-
   double angle_min_;
 
   double angle_max_;

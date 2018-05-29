@@ -33,6 +33,7 @@
 #include "sensor_msgs/LaserScan.h"
 #include <pluginlib/class_loader.h>
 
+#define GTEST_COUT std::cerr
 
 sensor_msgs::LaserScan gen_msg(){
   sensor_msgs::LaserScan msg;
@@ -61,12 +62,23 @@ sensor_msgs::LaserScan gen_msg(){
 void expect_ranges_eq(const std::vector<float> &a, const std::vector<float> &b) {
   for( int i=0; i<10; i++) {
     if(std::isnan(a[i])) {
-      EXPECT_TRUE(std::isnan(a[i]));
+      EXPECT_TRUE(std::isnan(b[i]));
     }
     else {
       EXPECT_NEAR(a[i], b[i], 1e-6);
     }
   }
+}
+
+void print_ranges(const std::vector<float> &a) {
+  for(auto i = 0; i < a.size(); i++)
+  {
+    // Zero range usually means obstacle is further than LIDAR max range
+    // Zero intensity occurs when the ray reflects from reflective object or another LIDAR
+    // NAN values present when points rejected by a filter
+    GTEST_COUT << a[i] << " ";
+  }
+  GTEST_COUT << "\n";
 }
 
 TEST(ScanToScanFilterChain, BadConfiguration)
@@ -178,7 +190,7 @@ TEST(ScanToScanFilterChain, RadiusFilter)
   sensor_msgs::LaserScan msg_in, msg_out, expected_msg;
   // test basic functionality
   float nanval = std::numeric_limits<float>::quiet_NaN();
-  float temp[] = {1.0, nanval, 1.0, 1.0, 1.0, nanval, 1.0, 1.0, 1.0, nanval};
+  float temp[] = {nanval, nanval, 1.0, 1.0, 1.0, nanval, 1.0, 1.0, 1.0, nanval};
   std::vector<float> v1 (temp, temp + sizeof(temp) / sizeof(float));
   expected_msg.ranges = v1;
   filters::FilterChain<sensor_msgs::LaserScan> filter_chain_("sensor_msgs::LaserScan");
@@ -189,14 +201,18 @@ TEST(ScanToScanFilterChain, RadiusFilter)
 
   EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
   expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
+  
+  //GTEST_COUT << "range validator\n";
+  //print_ranges(expected_msg.ranges);
+  //print_ranges(msg_out.ranges);
 
   // test cur_threshold is setup correctly and we consider euclidean distance rather than range only
   float temp2[] = {0.9, 0.8, 1.0, 1.0, 1.1, 9.0, 1.0, 1.0, 1.0, 2.3};
   std::vector<float> v2 (temp2, temp2 + sizeof(temp2) / sizeof(float));
   msg_in.ranges = v2;
   EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
-
-  float temp3[] = {nanval, nanval, 1.0, 1.0, 1.1, nanval, 1.0, 1.0, 1.0, nanval};
+  
+  float temp3[] = {nanval, nanval, nanval, 1.0, nanval, nanval, 1.0, 1.0, 1.0, nanval};
   std::vector<float> v3 (temp3, temp3 + sizeof(temp3) / sizeof(float));
   expected_msg.ranges = v3;
   expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
@@ -207,12 +223,67 @@ TEST(ScanToScanFilterChain, RadiusFilter)
   msg_in.ranges = v4;
   EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
 
-  float temp5[] = {4.9, nanval, nanval, nanval, 8.0, nanval, nanval, 1.0, 1.0, nanval};
+  float temp5[] = {nanval, nanval, nanval, nanval, nanval, nanval, nanval, nanval, 1.0, nanval};
   std::vector<float> v5 (temp5, temp5 + sizeof(temp5) / sizeof(float));
   expected_msg.ranges = v5;
   expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
 
   filter_chain_.clear();
+}
+
+TEST(ScanToScanFilterChain, Validator)
+{
+  sensor_msgs::LaserScan msg_in, msg_out, expected_msg;
+  // test basic functionality
+  float nanval = std::numeric_limits<float>::quiet_NaN();
+  filters::FilterChain<sensor_msgs::LaserScan> filter_chain_("sensor_msgs::LaserScan");
+
+  EXPECT_TRUE(filter_chain_.configure("validator_filter_chain"));
+
+  msg_in = gen_msg();
+
+
+//Test: passthrough
+  float temp[] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  std::vector<float> v (temp, temp + sizeof(temp) / sizeof(float));
+  expected_msg.ranges = v;
+
+  float temp1[] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  std::vector<float> v1 (temp1, temp1 + sizeof(temp1) / sizeof(float));
+  msg_in.ranges = v1;
+
+
+  EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
+  expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
+
+
+
+//Test: occlustion threshold. Many low values inside contour
+  float temp3[] = {0.4, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0, 1.0, 1.0, 1.0};
+  std::vector<float> v3 (temp3, temp3 + sizeof(temp3) / sizeof(float));
+  msg_in.ranges = v3;
+
+  EXPECT_FALSE(filter_chain_.update(msg_in, msg_out)) << "should fail due to occlusion threshold";
+  
+
+//Test: trigger invalid threshold
+  float temp4[] = {nanval, nanval, nanval, nanval, nanval, nanval, nanval, nanval, 1.0, 1.0};
+  std::vector<float> v4 (temp4, temp4 + sizeof(temp4) / sizeof(float));
+  expected_msg.ranges = v4;
+
+  float temp5[] = {nanval, nanval, nanval, nanval, nanval, nanval, nanval , nanval, 1.0, 1.0};
+  std::vector<float> v5 (temp5, temp5 + sizeof(temp5) / sizeof(float));
+  msg_in.ranges = v5;
+
+
+  EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
+  expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
+  //TODO: expect log warning for invalid points
+
+  filter_chain_.clear();
+
+
+
 }
 
 int main(int argc, char **argv){

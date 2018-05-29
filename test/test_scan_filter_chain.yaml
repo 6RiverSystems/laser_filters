@@ -50,3 +50,16 @@ radius_filter_chain:
       threshold_number: 2
       threshold_ratio: 0.1
 
+validator_filter_chain:
+- type: ScanValidator
+  name: scan_validator
+  params:
+    lidar_occlusion_threshold: 0.5
+    lidar_invalid_threshold: 0.7
+    contour_tolerance: 0.02
+    angle_min: -.5
+    angle_max: 0.5
+    angle_increment: 0.1
+    range_min: 0.5
+    range_max: 1.5
+    contour: [0.5, 0.5, 0.4, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]

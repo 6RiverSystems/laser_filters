@@ -30,7 +30,6 @@ bool laser_filters::ScanValidator::configure()
   getParam("lidar_occlusion_threshold", lidar_occlusion_threshold_);
   getParam("lidar_invalid_threshold", lidar_invalid_threshold_);
   getParam("contour_tolerance", contour_tolerance_);
-  getParam("frame_id", frame_id_);
   getParam("angle_min", angle_min_);
   getParam("angle_max", angle_max_);
   getParam("angle_increment", angle_increment_);
