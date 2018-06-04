@@ -69,15 +69,14 @@ bool laser_filters::ScanValidator::update(
   {
     // Zero range usually means obstacle is further than LIDAR max range
     // Zero intensity occurs when the ray reflects from reflective object or another LIDAR
-    if(input_scan.ranges[i] == 0 || input_scan.intensities[i] == 0)
+    if(input_scan.ranges[i] == 0 || input_scan.intensities[i] == 0 || std::isnan(input_scan.ranges[i]))
     {
       zero_count += 1;
       continue;
     }
-    // Counts for the reading is NaN or smaller than contour range
+    // Counts for the readings smaller than contour range
     // Make the contour slightly smaller to avoid false positive case
-    if(std::isnan(input_scan.ranges[i]) ||
-       input_scan.ranges[i] < (contour_[i] - contour_tolerance_))
+    if(input_scan.ranges[i] < (contour_[i] - contour_tolerance_))
     {
       occlusion_count += 1;
     }
