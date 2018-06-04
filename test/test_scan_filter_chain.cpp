@@ -181,7 +181,6 @@ TEST(ScanToScanFilterChain, ArrayFilter)
     EXPECT_NEAR(msg_out.ranges[i],expected_msg.ranges[i],1e-3);
     EXPECT_NEAR(msg_out.intensities[i],msg_in.intensities[i],1e-3);
   }
-
   filter_chain_.clear();
 }
 
@@ -201,17 +200,13 @@ TEST(ScanToScanFilterChain, RadiusFilter)
 
   EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
   expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
-  
-  //GTEST_COUT << "range validator\n";
-  //print_ranges(expected_msg.ranges);
-  //print_ranges(msg_out.ranges);
 
   // test cur_threshold is setup correctly and we consider euclidean distance rather than range only
   float temp2[] = {0.9, 0.8, 1.0, 1.0, 1.1, 9.0, 1.0, 1.0, 1.0, 2.3};
   std::vector<float> v2 (temp2, temp2 + sizeof(temp2) / sizeof(float));
   msg_in.ranges = v2;
   EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
-  
+
   float temp3[] = {nanval, nanval, nanval, 1.0, nanval, nanval, 1.0, 1.0, 1.0, nanval};
   std::vector<float> v3 (temp3, temp3 + sizeof(temp3) / sizeof(float));
   expected_msg.ranges = v3;
@@ -242,8 +237,7 @@ TEST(ScanToScanFilterChain, Validator)
 
   msg_in = gen_msg();
 
-
-//Test: passthrough
+  //Test: passthrough
   float temp[] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   std::vector<float> v (temp, temp + sizeof(temp) / sizeof(float));
   expected_msg.ranges = v;
@@ -252,21 +246,17 @@ TEST(ScanToScanFilterChain, Validator)
   std::vector<float> v1 (temp1, temp1 + sizeof(temp1) / sizeof(float));
   msg_in.ranges = v1;
 
-
   EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
   expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
 
-
-
-//Test: occlustion threshold. Many low values inside contour
+  //Test: occlustion threshold. Many low values inside contour
   float temp3[] = {0.4, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0, 1.0, 1.0, 1.0};
   std::vector<float> v3 (temp3, temp3 + sizeof(temp3) / sizeof(float));
   msg_in.ranges = v3;
 
   EXPECT_FALSE(filter_chain_.update(msg_in, msg_out)) << "should fail due to occlusion threshold";
-  
 
-//Test: trigger invalid threshold
+  //Test: trigger invalid threshold
   float temp4[] = {nanval, nanval, nanval, nanval, nanval, nanval, nanval, nanval, 1.0, 1.0};
   std::vector<float> v4 (temp4, temp4 + sizeof(temp4) / sizeof(float));
   expected_msg.ranges = v4;
@@ -275,15 +265,11 @@ TEST(ScanToScanFilterChain, Validator)
   std::vector<float> v5 (temp5, temp5 + sizeof(temp5) / sizeof(float));
   msg_in.ranges = v5;
 
-
   EXPECT_TRUE(filter_chain_.update(msg_in, msg_out));
   expect_ranges_eq(msg_out.ranges, expected_msg.ranges);
   //TODO: expect log warning for invalid points
 
   filter_chain_.clear();
-
-
-
 }
 
 int main(int argc, char **argv){

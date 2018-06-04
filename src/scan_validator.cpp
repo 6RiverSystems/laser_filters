@@ -20,7 +20,7 @@ laser_filters::ScanValidator::ScanValidator() :
 }
 
 laser_filters::ScanValidator::~ScanValidator()
-{ 
+{
 
 }
 
