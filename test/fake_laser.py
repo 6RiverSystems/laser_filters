@@ -5,7 +5,7 @@ import roslib; roslib.load_manifest(PKG)
 
 import rospy
 from sensor_msgs.msg import LaserScan
-from Numeric import ones
+from numpy import ones
 
 def laser_test():
     pub = rospy.Publisher('laser_scan', LaserScan)
