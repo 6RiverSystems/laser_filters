@@ -7,9 +7,8 @@ laser_filters::ReflectivityFilter::ReflectivityFilter() {
 
 bool laser_filters::ReflectivityFilter::configure() {
   bool reflectivity_thresh_set = getParam("reflectivity_threshold", reflectivity_thresh_);
-  bool distance_scale_set = getParam("distance_scale", distance_scale_);
-
-  return reflectivity_thresh_set && distance_scale_set;
+  
+  return reflectivity_thresh_set;
 }
 
 bool laser_filters::ReflectivityFilter::update(
@@ -20,7 +19,7 @@ bool laser_filters::ReflectivityFilter::update(
 
     for (unsigned int i=0; i < scan_out.ranges.size(); i++) {
         // check if intensity * (distance_scale / range) > reflectivity_thresh
-        if (scan_out.intensities[i] * distance_scale_ * (1/scan_out.ranges[i]) < reflectivity_thresh_) {
+        if (scan_out.intensities[i] * (scan_out.ranges[i]) < reflectivity_thresh_) {
             scan_out.ranges[i] = std::numeric_limits<float>::quiet_NaN();
         }
     }
