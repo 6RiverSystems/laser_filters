@@ -78,6 +78,12 @@
 	DEPRECATED: This is a filter which filters points out of a laser scan which are inside the inscribed radius.
       </description>
     </class>
+    <class name="laser_filters/ReflectivityFilter" type="laser_filters::ReflectivityFilter"
+	    base_class_type="filters::FilterBase<sensor_msgs::LaserScan>">
+      <description>
+	 This is a filter that selects points above a certain intensity to distance ratio.
+      </description>
+    </class>
   </library>
   <library path="lib/libpointcloud_filters">
     <class name="laser_filters/PointCloudFootprintFilter" type="laser_filters::PointCloudFootprintFilter"
