@@ -84,6 +84,12 @@
 	 This is a filter that selects points above a certain intensity to distance ratio.
       </description>
     </class>
+    <class name="laser_filters/StepFilter" type="laser_filters::StepFilter"
+	    base_class_type="filters::FilterBase<sensor_msgs::LaserScan>">
+      <description>
+	 This is a filter that selects a certain number of beams.
+      </description>
+    </class>
   </library>
   <library path="lib/libpointcloud_filters">
     <class name="laser_filters/PointCloudFootprintFilter" type="laser_filters::PointCloudFootprintFilter"
