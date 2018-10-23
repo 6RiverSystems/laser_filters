@@ -22,6 +22,9 @@ bool laser_filters::ReflectivityFilter::update(
         if (scan_out.intensities[i] * (scan_out.ranges[i]) < reflectivity_thresh_) {
             scan_out.ranges[i] = std::numeric_limits<float>::quiet_NaN();
         }
+
+        // change all intensities to be range*intensity for debugging
+        scan_out.intensities[i] = scan_out.intensities[i]*scan_out.ranges[i];
     }
 
     return true;
