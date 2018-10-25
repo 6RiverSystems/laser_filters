@@ -87,7 +87,13 @@
     <class name="laser_filters/StepFilter" type="laser_filters::StepFilter"
 	    base_class_type="filters::FilterBase<sensor_msgs::LaserScan>">
       <description>
-	 This is a filter that selects a certain number of beams.
+	 This is a filter that selects a uniformly distributed number of beams.
+      </description>
+    </class>
+    <class name="laser_filters/IntensityBiasFilter" type="laser_filters::IntensityBiasFilter"
+	    base_class_type="filters::FilterBase<sensor_msgs::LaserScan>">
+      <description>
+	 This is a filter that selects high intensity beams in addition to uniformly distributed beams.
       </description>
     </class>
   </library>

@@ -42,6 +42,7 @@
 #include "laser_filters/scan_validator.h"
 #include "laser_filters/reflectivity_filter.h"
 #include "laser_filters/step_filter.h"
+#include "laser_filters/intensity_bias_filter.h"
 #include "sensor_msgs/LaserScan.h"
 #include "filters/filter_base.h"
 
@@ -62,3 +63,4 @@ PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanBoxFilter, laser_filters::LaserS
 PLUGINLIB_DECLARE_CLASS(laser_filters, ScanValidator, laser_filters::ScanValidator, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, ReflectivityFilter, laser_filters::ReflectivityFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, StepFilter, laser_filters::StepFilter, filters::FilterBase<sensor_msgs::LaserScan>)
+PLUGINLIB_DECLARE_CLASS(laser_filters, IntensityBiasFilter, laser_filters::IntensityBiasFilter, filters::FilterBase<sensor_msgs::LaserScan>)
