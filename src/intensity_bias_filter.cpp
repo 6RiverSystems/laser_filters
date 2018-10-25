@@ -29,21 +29,32 @@ bool laser_filters::IntensityBiasFilter::update(
 
     // calculate step sizes for uniform sampling and intensity sampling
     int uniform_step_size = scan_in.ranges.size() / num_uniform_beams;
-    int intensity_step_size = scan_in.ranges.size() / select_num_intensity_beams ;
+    int intensity_step_size = total_num_intensity_beams / select_num_intensity_beams ;
+    
     // NaN anything we don't want
     int intensity_count = 0;
+    int kept_beam_count = 0;
     for (unsigned int i=0; i < scan_out.ranges.size(); i++) {
       // does this beam qualify for uniform sampling
-      bool keep_uniform = (i % uniform_step_size);
+      bool keep_uniform = !(i % uniform_step_size);
 
       // does this beam qualify for intensity sampling
-      if (scan_out.intensities[i] > intensity_threshold_) intensity_count++;
-      bool keep_intensity = (intensity_count % intensity_step_size);
+      bool keep_intensity = false;
+      if (scan_out.intensities[i] > intensity_threshold_) {
+        //ROS_INFO_STREAM("Beam intensity: " << i << " " <<  scan_out.intensities[i]);
+        intensity_count++;
+        keep_intensity = !(intensity_count % intensity_step_size);
       
+      }
+
       bool keep_beam = keep_uniform || keep_intensity;
       if (!keep_beam) {
         scan_out.ranges[i] = std::numeric_limits<float>::quiet_NaN();
+      } else {
+        //ROS_INFO_STREAM("Keeping beam " << i << " because " << keep_uniform << keep_intensity);
+        kept_beam_count += 1;
       }
     }
+    // ROS_INFO_STREAM("Kept " << kept_beam_count << "beams");
     return true;
 }
