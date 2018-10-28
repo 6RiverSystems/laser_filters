@@ -16,10 +16,13 @@ bool laser_filters::StepFilter::update(
 {
     // all of the laser filters do this to save processing?
     scan_out = scan_in;
+    
+    num_beams_ = std::max(num_beams_, 1);
     int beam_step = scan_out.ranges.size() / num_beams_;
+    beam_step = std::max(beam_step, 1);
     for (unsigned int i=0; i < scan_out.ranges.size(); i++) {
         // NaN out any beams that are NOT in the sample
-        if (!!(i % beam_step)) {
+        if (!(i % beam_step)) {
             scan_out.ranges[i] = std::numeric_limits<float>::quiet_NaN();
         }
     }
