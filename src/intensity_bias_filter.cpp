@@ -41,7 +41,6 @@ bool laser_filters::IntensityBiasFilter::update(
       // does this beam qualify for intensity sampling
       bool keep_intensity = false;
       if (scan_out.intensities[i] > intensity_threshold_) {
-        //ROS_INFO_STREAM("Beam intensity: " << i << " " <<  scan_out.intensities[i]);
         intensity_count++;
         keep_intensity = !(intensity_count % intensity_step_size);
       
@@ -51,10 +50,8 @@ bool laser_filters::IntensityBiasFilter::update(
       if (!keep_beam) {
         scan_out.ranges[i] = std::numeric_limits<float>::quiet_NaN();
       } else {
-        //ROS_INFO_STREAM("Keeping beam " << i << " because " << keep_uniform << keep_intensity);
-        kept_beam_count += 1;
+         kept_beam_count += 1;
       }
     }
-    // ROS_INFO_STREAM("Kept " << kept_beam_count << "beams");
     return true;
 }
