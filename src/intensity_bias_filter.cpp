@@ -12,7 +12,7 @@ bool laser_filters::IntensityBiasFilter::configure() {
   bool max_num_high_intensity_beams_set = getParam("max_intensity_selected", max_num_high_intensity_beams_);
 
   if (max_num_high_intensity_beams_ > num_total_beams_) {
-      ROS_WARN("Maximum beams chosen by intensity is greater than total beams");
+      ROS_WARN_STREAM("Maximum beams chosen by intensity (" << max_num_high_intensity_beams_ <<") is greater than total beams(" << num_total_beams_ <<")");
   }
 
   return num_total_beams_set && high_intensity_thresh_set && max_num_high_intensity_beams_set;
@@ -34,20 +34,30 @@ bool laser_filters::IntensityBiasFilter::update(
     // we also don't want step size to be less than 1
     num_uniform_beams = std::max(num_uniform_beams, 1);
     num_high_intensity_beams = std::max(num_high_intensity_beams, 1);
-    int uniform_step_size = std::max( (int) scan_in.ranges.size() / num_uniform_beams, 1);
-    int intensity_step_size = std::max(total_num_high_intensity_beams / num_high_intensity_beams, 1);
+    double uniform_step_size = (double) scan_in.ranges.size() / num_uniform_beams;
+    double intensity_step_size = total_num_high_intensity_beams / num_high_intensity_beams;
      
     // NaN anything we don't want
     int intensity_count = 0;
+    double uniform_step = 0;
+    double intensity_step = 0;
     for (unsigned int i=0; i < scan_out.ranges.size(); i++) {
       // does this beam qualify for uniform sampling
-      bool keep_uniform = !(i % uniform_step_size);
+      bool keep_uniform = false;
+
+      if ( (int) uniform_step == i) {
+        keep_uniform = true;
+        uniform_step += uniform_step_size;
+      }
 
       // does this beam qualify for intensity sampling
       bool keep_intensity = false;
       if (scan_out.intensities[i] > high_intensity_threshold_) {
         intensity_count++;
-        keep_intensity = !(intensity_count % intensity_step_size);
+        if ( (int) intensity_step == i) {
+          keep_intensity = true;
+          intensity_step += intensity_step_size;
+        }
       }
 
       bool keep_beam = keep_uniform || keep_intensity;
