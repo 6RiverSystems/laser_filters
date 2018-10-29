@@ -25,7 +25,7 @@ bool laser_filters::IntensityBiasFilter::update(
     scan_out = scan_in;
 
     // calculate how many high intensity beams to select
-    int total_num_high_intensity_beams = std::count_if(scan_out.intensities.begin(), scan_out.intensities.end(), [&](int i){return i > intensity_threshold_; });
+    int total_num_high_intensity_beams = std::count_if(scan_out.intensities.begin(), scan_out.intensities.end(), [&](int i){return i > high_intensity_threshold_; });
     int num_high_intensity_beams = std::min(total_num_high_intensity_beams, max_num_high_intensity_beams_);
     int num_uniform_beams = num_total_beams_ - num_high_intensity_beams;
 
@@ -34,7 +34,7 @@ bool laser_filters::IntensityBiasFilter::update(
     // we also don't want step size to be less than 1
     num_uniform_beams = std::max(num_uniform_beams, 1);
     num_high_intensity_beams = std::max(num_high_intensity_beams, 1);
-    int uniform_step_size = std::max(scan_in.ranges.size() / num_uniform_beams, 1);
+    int uniform_step_size = std::max( (int) scan_in.ranges.size() / num_uniform_beams, 1);
     int intensity_step_size = std::max(total_num_high_intensity_beams / num_high_intensity_beams, 1);
      
     // NaN anything we don't want
