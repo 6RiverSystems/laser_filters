@@ -8,7 +8,7 @@ laser_filters::IntensityBiasFilter::IntensityBiasFilter() {
 
 bool laser_filters::IntensityBiasFilter::configure() {
   bool num_total_beams_set = getParam("num_total_beams", num_total_beams_);
-  bool high_intensity_thresh_set = getParam("intensity_threshold", high_intensity_threshold_);
+  bool high_intensity_thresh_set = ros::param::get("intensity_threshold", high_intensity_threshold_);
   bool max_num_high_intensity_beams_set = getParam("max_num_high_intensity_beams", max_num_high_intensity_beams_);
   if (max_num_high_intensity_beams_ > num_total_beams_) {
       ROS_WARN_STREAM("Maximum beams chosen by intensity (" << max_num_high_intensity_beams_ <<") is greater than total beams(" << num_total_beams_ <<")");

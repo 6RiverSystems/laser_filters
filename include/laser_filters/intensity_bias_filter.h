@@ -17,7 +17,7 @@ class IntensityBiasFilter : public filters::FilterBase<sensor_msgs::LaserScan>
 
   private:
     int num_total_beams_;
-    int high_intensity_threshold_;
+    float high_intensity_threshold_;
     int max_num_high_intensity_beams_;
 
 
