@@ -6,9 +6,9 @@ laser_filters::StepFilter::StepFilter() {
 }
 
 bool laser_filters::StepFilter::configure() {
-  bool num_beams_set = getParam("num_beams", num_beams_);
+  bool num_total_beams_set = getParam("num_total_beams", num_total_beams_);
 
-  return num_beams_set;
+  return num_total_beams_set;
 }
 
 bool laser_filters::StepFilter::update(
@@ -17,8 +17,8 @@ bool laser_filters::StepFilter::update(
     // all of the laser filters do this to save processing?
     scan_out = scan_in;
     
-    num_beams_ = std::max(num_beams_, 1);
-    double beam_step_size = (double) scan_out.ranges.size() / num_beams_;
+    num_total_beams_ = std::max(num_total_beams_, 1);
+    double beam_step_size = (double) scan_out.ranges.size() / num_total_beams_;
     double beam_step = 0;
     for (unsigned int i=0; i < scan_out.ranges.size(); i++) {
         bool keep_beam = false;

@@ -16,7 +16,7 @@ class StepFilter : public filters::FilterBase<sensor_msgs::LaserScan>
     bool update(const sensor_msgs::LaserScan& scan_in, sensor_msgs::LaserScan& scan_out);
 
   private:
-    int num_beams_;
+    int num_total_beams_;
 
 };
 }
