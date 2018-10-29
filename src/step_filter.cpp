@@ -18,11 +18,11 @@ bool laser_filters::StepFilter::update(
     scan_out = scan_in;
     
     num_total_beams_ = std::max(num_total_beams_, 1);
-    double beam_step_size = (double) scan_out.ranges.size() / num_total_beams_;
+    double beam_step_size = static_cast<double>(scan_out.ranges.size()) / num_total_beams_;
     double beam_step = 0;
     for (unsigned int i=0; i < scan_out.ranges.size(); i++) {
         bool keep_beam = false;
-        if ( (int) beam_step == i) {
+        if (static_cast<int>(beam_step) == i) {
             keep_beam = true;
             beam_step += beam_step_size;
         }
