@@ -24,7 +24,7 @@ bool laser_filters::IntensityBiasFilter::update(
     scan_out = scan_in;
 
     // calculate how many high intensity beams to select
-    int total_num_high_intensity_beams = std::count_if(scan_out.intensities.begin(), scan_out.intensities.end(), [&](int i){return i > high_intensity_threshold_; });
+    int total_num_high_intensity_beams = std::count_if(scan_out.intensities.begin(), scan_out.intensities.end(), [&](float i){return i > high_intensity_threshold_; });
     int num_high_intensity_beams = std::min(total_num_high_intensity_beams, max_num_high_intensity_beams_);
     int num_uniform_beams = num_total_beams_ - num_high_intensity_beams;
 
