@@ -9,7 +9,7 @@ laser_filters::IntensityBiasFilter::IntensityBiasFilter() {
 bool laser_filters::IntensityBiasFilter::configure() {
   bool num_total_beams_set = getParam("num_total_beams", num_total_beams_);
   bool high_intensity_thresh_set = getParam("intensity_threshold", high_intensity_threshold_);
-  bool max_num_high_intensity_beams_set = getParam("max_intensity_selected", max_num_high_intensity_beams_);
+  bool max_num_high_intensity_beams_set = getParam("max_num_high_intensity_beams", max_num_high_intensity_beams_);
 
   if (max_num_high_intensity_beams_ > num_total_beams_) {
       ROS_WARN_STREAM("Maximum beams chosen by intensity (" << max_num_high_intensity_beams_ <<") is greater than total beams(" << num_total_beams_ <<")");
@@ -36,17 +36,20 @@ bool laser_filters::IntensityBiasFilter::update(
     num_high_intensity_beams = std::max(num_high_intensity_beams, 1);
     double uniform_step_size = (double) scan_in.ranges.size() / num_uniform_beams;
     double intensity_step_size = (double) total_num_high_intensity_beams / num_high_intensity_beams;
-     
+    ROS_DEBUG_STREAM("Filtering beam for " << num_uniform_beams << " uniform beams and " << num_high_intensity_beams << " high intensity beams");
+    ROS_DEBUG_STREAM("Uniform step size: " << uniform_step_size << " High intensity step size: " << intensity_step_size);
     // NaN anything we don't want
     int intensity_count = 0;
     double uniform_step = 0;
     double intensity_step = 0;
+    int kept_beams = 0;
     for (unsigned int i=0; i < scan_out.ranges.size(); i++) {
       // does this beam qualify for uniform sampling
       bool keep_uniform = false;
 
       if ( (int) uniform_step == i) {
         keep_uniform = true;
+        ROS_DEBUG_STREAM("Uniform sampling keeping beam " << i << "with uniform step "<<uniform_step);
         uniform_step += uniform_step_size;
       }
 
@@ -55,6 +58,7 @@ bool laser_filters::IntensityBiasFilter::update(
       if (scan_out.intensities[i] > high_intensity_threshold_) {
         if ( (int) intensity_step == intensity_count) {
           keep_intensity = true;
+          ROS_DEBUG_STREAM("Intensity sampling keeping beam " << i << "with intensity step "<<intensity_step);
           intensity_step += intensity_step_size;
         }
         intensity_count++;
@@ -63,7 +67,11 @@ bool laser_filters::IntensityBiasFilter::update(
       bool keep_beam = keep_uniform || keep_intensity;
       if (!keep_beam) {
         scan_out.ranges[i] = std::numeric_limits<float>::quiet_NaN();
+      } else {
+        kept_beams += 1;
       }
     }
+
+    ROS_DEBUG_STREAM("Kept " << kept_beams << " beams");
     return true;
 }
