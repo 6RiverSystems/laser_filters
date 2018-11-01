@@ -40,6 +40,9 @@
 #include "laser_filters/angular_bounds_filter_in_place.h"
 #include "laser_filters/box_filter.h"
 #include "laser_filters/scan_validator.h"
+#include "laser_filters/reflectivity_filter.h"
+#include "laser_filters/step_filter.h"
+#include "laser_filters/intensity_bias_filter.h"
 #include "sensor_msgs/LaserScan.h"
 #include "filters/filter_base.h"
 
@@ -58,3 +61,6 @@ PLUGINLIB_DECLARE_CLASS(laser_filters, ScanShadowsFilter, laser_filters::ScanSha
 PLUGINLIB_DECLARE_CLASS(laser_filters, InterpolationFilter, laser_filters::InterpolationFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanBoxFilter, laser_filters::LaserScanBoxFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, ScanValidator, laser_filters::ScanValidator, filters::FilterBase<sensor_msgs::LaserScan>)
+PLUGINLIB_DECLARE_CLASS(laser_filters, ReflectivityFilter, laser_filters::ReflectivityFilter, filters::FilterBase<sensor_msgs::LaserScan>)
+PLUGINLIB_DECLARE_CLASS(laser_filters, StepFilter, laser_filters::StepFilter, filters::FilterBase<sensor_msgs::LaserScan>)
+PLUGINLIB_DECLARE_CLASS(laser_filters, IntensityBiasFilter, laser_filters::IntensityBiasFilter, filters::FilterBase<sensor_msgs::LaserScan>)
