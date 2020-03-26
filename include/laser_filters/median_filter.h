@@ -38,7 +38,12 @@
 #include "boost/scoped_ptr.hpp"
 #include "sensor_msgs/LaserScan.h"
 
+// suppress warnings coming from /opt/ros/kinetic/filters/median.h
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
 #include "filters/median.h"
+#pragma clang diagnostic pop
+
 #include "filters/mean.h"
 #include "filters/filter_chain.h"
 #include "boost/thread/mutex.hpp"
