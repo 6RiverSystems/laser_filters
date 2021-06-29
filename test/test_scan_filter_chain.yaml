@@ -33,12 +33,12 @@ array_filter_chain:
     params: 
       range_filter_chain:
         - name: median_2
-          type: laser_filters/MultiChannelMeanFilterFloat 
+          type: MultiChannelMeanFilterFloat 
           params:
             number_of_observations: 3
       intensity_filter_chain:
         - name: median_2
-          type: laser_filters/MultiChannelMeanFilterFloat
+          type: MultiChannelMeanFilterFloat
           params:
             number_of_observations: 3
 
