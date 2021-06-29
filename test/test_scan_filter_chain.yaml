@@ -28,8 +28,8 @@ shadow_filter_chain:
     window: 1
 
 array_filter_chain:
-  - type: LaserArrayFilter
-    name: laser_filters/laser_median_filter
+  - type: laser_filters/LaserArrayFilter
+    name: laser_median_filter
     params: 
       range_filter_chain:
         - name: median_2
@@ -43,16 +43,16 @@ array_filter_chain:
             number_of_observations: 3
 
 radius_filter_chain:
-  - type: RadiusSearchFilter
-    name: laser_filters/radius_search
+  - type: laser_filters/RadiusSearchFilter
+    name: radius_search
     params:
       neighbor_number: 3
       threshold_number: 2
       threshold_ratio: 0.1
 
 validator_filter_chain:
-- type: ScanValidator
-  name: laser_filters/scan_validator
+- type: laser_filters/ScanValidator
+  name: scan_validator
   params:
     lidar_occlusion_threshold: 0.5
     lidar_invalid_threshold: 0.7
